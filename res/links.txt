@@ -1,0 +1,4 @@
+statement		http://www.cs.us.es/cursos/ia2/trabajos/IA2_Trabajo_Quesada.pdf
+enumeration		http://polar.lsi.uned.es/revista/index.php/ia/article/viewFile/533/517
+which-naive-bayes 	http://www.aueb.gr/users/ion/docs/ceas2006_paper.pdf
+bayesian-approach	http://ftp.research.microsoft.com/pub/ejh/junkfilter.pdf
