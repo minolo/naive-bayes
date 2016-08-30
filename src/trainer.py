@@ -30,6 +30,10 @@ def train(ham_files, spam_files):
     result["dict-ham"]  = dict([(word, occurrences / number_ham ) for (word, occurrences) in dict(ham_tokens_counter ).items()])
     result["dict-spam"] = dict([(word, occurrences / number_spam) for (word, occurrences) in dict(spam_tokens_counter).items()])
 
+    # Remove words with probability 1
+    result["dict-ham" ] = dict([(word, probability) for (word, probability) in result["dict-ham" ].items() if probability < 1])
+    result["dict-spam"] = dict([(word, probability) for (word, probability) in result["dict-spam"].items() if probability < 1])
+
     return result
 
 def main():
@@ -59,7 +63,6 @@ def main():
 
     # Build the dictionary with the training data
     result = train(ham_files, spam_files)
-    print(result)
 
     # Save the result in the output file
     try:
