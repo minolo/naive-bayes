@@ -29,7 +29,7 @@ def check_args(args):
 def parse_args():
     argpar = argparse.ArgumentParser(description='Tokenizer')
     split_group = argpar.add_argument_group(title="Splitting options",
-            description="You must provide almost one splitting method: percentages or \"enron\" division")
+            description="You must provide at least one splitting method: percentages or \"enron\" division")
 
     split_group.add_argument("-e", "--eval_percent",
                               type=float,
@@ -47,13 +47,13 @@ def parse_args():
                         required=True,
                         help="Data directory")
     argpar.add_argument("evaluation_set_ham",
-                        help="Output evaluation set file name")
+                        help="Output ham evaluation set file name")
     argpar.add_argument("evaluation_set_spam",
-                        help="Output evaluation set file name")
+                        help="Output spam evaluation set file name")
     argpar.add_argument("training_set_ham",
-                        help="Output evaluation set file name")
+                        help="Output ham training set file name")
     argpar.add_argument("training_set_spam",
-                        help="Output evaluation set file name")
+                        help="Output spam training set file name")
 
     args = argpar.parse_args()
     check_args(args)
