@@ -2,3 +2,6 @@
 res/*.pdf
 res/bib/*.pdf
 res/dsets/enron?
+
+# Python
+src/__pycache__
