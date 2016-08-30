@@ -61,9 +61,9 @@ def parse_args():
     return args
 
 def split_enron(ddir):
-    ev_dirs = [os.path.join(ddir, enron) for enron in
+    ev_dirs = [os.path.join(ddir, "enron6")]
+    tr_dirs = [os.path.join(ddir, enron) for enron in
                ["enron%d" % n for n in range(1, 6)]]
-    tr_dirs = [os.path.join(ddir, "enron6")]
 
     ev_ham =  [d + "/ham/"  + f for d in ev_dirs for f in os.listdir(d + "/ham")]
     tr_ham =  [d + "/ham/"  + f for d in tr_dirs for f in os.listdir(d + "/ham")]
