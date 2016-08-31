@@ -1,5 +1,6 @@
 import os
 import logging
+import threading
 import argparse
 import random
 import re
@@ -69,7 +70,7 @@ def split_enron(ddir):
 
     return [ev_ham, ev_spam, tr_ham, tr_spam]
 
-def split_percent(ddir, evp, trp):
+def split_perc(ddir, evp, trp):
     ham  = [os.path.join(d, f) for d, ds, fs in os.walk(ddir) for f in fs if
             re.search("enron./ham", d)]
     spam = [os.path.join(d, f) for d, ds, fs in os.walk(ddir) for f in fs if
@@ -90,27 +91,30 @@ def split_percent(ddir, evp, trp):
 
     return [ev_ham, ev_spam, tr_ham, tr_spam]
 
-def main():
-    args = parse_args()
-
-    if args.enron:
-        ev_ham, ev_spam, tr_ham, tr_spam = split_enron(args.data_dir)
-    else:
-        ev_ham, ev_spam, tr_ham, tr_spam = split_perc(args.data_dir,
-                                                      args.eval_percent,
-                                                      args.train_percent)
+def write_list(lst, path):
     try:
-        with open(args.evaluation_set_ham,  "w") as f_ev_ham,\
-             open(args.evaluation_set_spam, "w") as f_ev_spam,\
-             open(args.training_set_ham,    "w") as f_tr_ham,\
-             open(args.training_set_spam,   "w") as f_tr_spam:
-                 f_ev_ham.writelines("\n".join(ev_ham))
-                 f_ev_spam.writelines("\n".join(ev_spam))
-                 f_tr_ham.writelines("\n".join(tr_ham))
-                 f_tr_spam.writelines("\n".join(tr_spam))
+        with open(path, "w") as f:
+            f.writelines("\n".join(lst))
     except Exception as e:
         logging.error(e)
         exit(-1)
+
+def main():
+    args = parse_args()
+
+    out_files = [args.evaluation_set_ham, args.evaluation_set_spam,
+                 args.training_set_ham, args.training_set_spam]
+
+    if args.enron:
+        lists = split_enron(args.data_dir)
+    else:
+        lists = split_perc(args.data_dir, args.eval_percent, args.train_percent)
+
+    threads=[]
+    for (l, f) in zip(lists, out_files):
+        t = threading.Thread(target=write_list, args=[l, f])
+        threads.append(t)
+        t.start()
 
 if __name__ == "__main__":
     main()
