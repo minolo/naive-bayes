@@ -1,4 +1,7 @@
 from classifier import classify
+import argparse
+import logging
+import pickle
 
 def evaluate(ham_mails, spam_mails, training_data):
 
@@ -23,6 +26,8 @@ def evaluate(ham_mails, spam_mails, training_data):
     return cmat
 
 def main():
+
+    # Define the program arguments for the parser
     argpar = argparse.ArgumentParser(description='Evaluator')
     argpar.add_argument("-a", "--ham_path_list",
                         required=True,
@@ -36,9 +41,35 @@ def main():
     argpar.add_argument("-m", "--machine",
                         action="store_true",
                         help="Output in machine format")
-    args = argpar.parse_args()
 
-    cmat= evaluate(args.ham_path_list, args.spam_path_list, args.training_data)
+    # Parse the arguments
+    args = argpar.parse_args()
+   
+    # Read file lists and remove empty lines
+    try:
+        with open(args.ham_path_list, "rb") as ham_list:
+            ham_files = ham_list.read().splitlines()
+            ham_files = [line for line in ham_files if line]
+
+        with open(args.spam_path_list, "rb") as spam_list:
+            spam_files = spam_list.read().splitlines()
+            spam_files = [line for line in spam_files if line]
+
+    except Exception as e:
+        logging.error(e)
+        exit(-1)
+
+    # Load training data
+    try:
+        with open(args.training_data, "rb") as training_data_file:
+            training_data = pickle.load(training_data_file)
+    
+    except Exception as e:
+        logging.error(e)
+        exit(-1)
+
+    # Evaluate the performance of the algorithm
+    cmat = evaluate(ham_files, spam_files, training_data)
 
     if args.machine:
         print("{} {} {} {}".format(cmat["ham"]["ham"], cmat["ham"]["spam"],
