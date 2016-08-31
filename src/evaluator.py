@@ -1,27 +1,29 @@
 from classifier import classify
 
 def evaluate(ham_mails, spam_mails, training_data):
+
+    # Initialize confusion matrix
     cmat = {"ham" :{"ham":0, "spam":0},
             "spam":{"ham":0, "spam":0}}
 
+    # Fill confusion matrix
     for mail in ham_mails:
-        if clasify(mail, training_data) == "ham":
-            cmat["ham"]["ham"]  += 1
-        else:
-            cmat["ham"]["spam"] += 1
+        cmat["ham" ][classify(mail, training_data)] += 1
 
     for mail in spam_mails:
-        if clasify(mail, training_data) == "ham":
-            cmat["spam"]["ham"]  += 1
-        else:
-            cmat["spam"]["spam"] += 1
+        cmat["spam"][classify(mail, training_data)] += 1
 
-    sum = cmat["ham"]["ham"] + cmat["ham"]["spam"] +\
-          cmat["spam"]["ham"] + cmat["spam"]["spam"]
-
-    cmat["ham"]["ham"]   /= sum
-    cmat["ham"]["spam"]  /= sum
-    cmat["spam"]["ham"]  /= sum
-    cmat["spam"]["spam"] /= sum
+    # Normalize results
+    s = len(ham_mails) + len(spam_mails)
+    cmat["ham" ]["ham" ] /= s
+    cmat["ham" ]["spam"] /= s
+    cmat["spam"]["ham" ] /= s
+    cmat["spam"]["spam"] /= s
 
     return cmat
+
+def main():
+    pass
+
+if __name__ == "__main__":
+    main()
