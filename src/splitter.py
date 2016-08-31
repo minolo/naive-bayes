@@ -40,9 +40,6 @@ def parse_args():
     split_group.add_argument("--enron",
                               action="store_true",
                               help="Selects \"enron{1..5}\" for training and \"enron6\" for evaluation\"")
-    split_group.add_argument("-r", "--random",
-                              action="store_true",
-                              help="Randomizes selection")
     argpar.add_argument("-d", "--data_dir",
                         required=True,
                         help="Data directory")
@@ -72,15 +69,14 @@ def split_enron(ddir):
 
     return [ev_ham, ev_spam, tr_ham, tr_spam]
 
-def split_percent(ddir, evp, trp, rnd):
+def split_percent(ddir, evp, trp):
     ham  = [os.path.join(d, f) for d, ds, fs in os.walk(ddir) for f in fs if
             re.search("enron./ham", d)]
     spam = [os.path.join(d, f) for d, ds, fs in os.walk(ddir) for f in fs if
             re.search("enron./spam", d)]
 
-    if (rnd):
-        random.shuffle(ham)
-        random.shuffle(spam)
+    random.shuffle(ham)
+    random.shuffle(spam)
 
     ev_ham_idx  = int((len(ham)  + 1) * evp)
     ev_spam_idx = int((len(spam) + 1) * evp)
@@ -102,8 +98,7 @@ def main():
     else:
         ev_ham, ev_spam, tr_ham, tr_spam = split_perc(args.data_dir,
                                                       args.eval_percent,
-                                                      args.train_percent,
-                                                      args.random)
+                                                      args.train_percent)
     try:
         with open(args.evaluation_set_ham,  "w") as f_ev_ham,\
              open(args.evaluation_set_spam, "w") as f_ev_spam,\
