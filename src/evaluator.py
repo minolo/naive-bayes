@@ -2,19 +2,26 @@ from classifier import classify
 import argparse
 import logging
 import pickle
+import multiprocessing
+from functools import partial
 
-def evaluate(ham_mails, spam_mails, training_data):
+def evaluate(num_threads, ham_mails, spam_mails, training_data):
 
     # Initialize confusion matrix
     cmat = {"ham" :{"ham":0, "spam":0},
             "spam":{"ham":0, "spam":0}}
 
-    # Fill confusion matrix
-    for mail in ham_mails:
-        cmat["ham" ][classify(mail, training_data)] += 1
+    # Execute classifier threads
+    with multiprocessing.Pool(num_threads) as pool:
+        ham_mails_classified  = pool.map(partial(classify, training_data=training_data), ham_mails )
+        spam_mails_classified = pool.map(partial(classify, training_data=training_data), spam_mails)
 
-    for mail in spam_mails:
-        cmat["spam"][classify(mail, training_data)] += 1
+    # Fill confusion matrix
+    for classification in ham_mails_classified:
+        cmat["ham" ][classification] += 1
+
+    for classification in spam_mails_classified:
+        cmat["spam"][classification] += 1
 
     # Normalize results
     s = len(ham_mails) + len(spam_mails)
@@ -41,10 +48,12 @@ def main():
     argpar.add_argument("-m", "--machine",
                         action="store_true",
                         help="Output in machine format")
+    argpar.add_argument("-n", "--num-threads", nargs='?', const=1, type=int, default=multiprocessing.cpu_count(),
+                        help="Number of threads for the evaluator loop")
 
     # Parse the arguments
     args = argpar.parse_args()
-   
+
     # Read file lists and remove empty lines
     try:
         with open(args.ham_path_list, "rb") as ham_list:
@@ -63,21 +72,21 @@ def main():
     try:
         with open(args.training_data, "rb") as training_data_file:
             training_data = pickle.load(training_data_file)
-    
+
     except Exception as e:
         logging.error(e)
         exit(-1)
 
     # Evaluate the performance of the algorithm
-    cmat = evaluate(ham_files, spam_files, training_data)
+    cmat = evaluate(args.num_threads, ham_files, spam_files, training_data)
 
     if args.machine:
         print("{} {} {} {}".format(cmat["ham"]["ham"], cmat["ham"]["spam"],
                                    cmat["spam"]["ham"], cmat["spam"]["spam"]))
     else:
-        print("     ham   spam\n"
-              "ham  {:3d}%  {:3d}%\n"
-              "spam {:3d}%  {:3d}%".format(cmat["ham"]["ham"]*100,
+        print("     ham      spam\n"
+              "ham  {:.2f}%   {:.2f}%\n"
+              "spam {:.2f}%   {:.2f}%".format(cmat["ham"]["ham"]*100,
                                            cmat["ham"]["spam"]*100,
                                            cmat["spam"]["ham"]*100,
                                            cmat["spam"]["spam"]*100))

@@ -12,10 +12,10 @@ def calculate_token_probability(mail_tokens, word, probability):
         return 1 - probability
 
 def classify(mail_path, training_data):
-    
+
     # Tokenize mail
     mail_tokens = tokenize(mail_path, token_type="r1cw")
-    
+
     # Calculate conditional probabilities
     p_ham_list  = [calculate_token_probability(mail_tokens, word, probability) for (word, probability) in training_data["dict-ham" ].items()]
     p_spam_list = [calculate_token_probability(mail_tokens, word, probability) for (word, probability) in training_data["dict-spam"].items()]
@@ -37,7 +37,7 @@ def classify(mail_path, training_data):
         return "spam"
 
 def main():
-    
+
     # Define the program arguments for the parser
     argpar = argparse.ArgumentParser()
     argpar.add_argument("-i", "--input-file",    type=str, required=True, help="Input file to classify")
@@ -50,7 +50,7 @@ def main():
     try:
         with open(args.training_data, "rb") as training_data_file:
             training_data = pickle.load(training_data_file)
-    
+
     except Exception as e:
         logging.error(e)
         exit(-1)
