@@ -1,8 +1,7 @@
 import logging
-from functools import reduce
-import operator
 import pickle
 import argparse
+import math
 
 from tokenizer import tokenize
 
@@ -20,15 +19,16 @@ def classify(mail_path, training_data):
     # Calculate conditional probabilities
     p_ham_list  = [calculate_token_probability(mail_tokens, word, probability) for (word, probability) in training_data["dict-ham" ].items()]
     p_spam_list = [calculate_token_probability(mail_tokens, word, probability) for (word, probability) in training_data["dict-spam"].items()]
-    p_mail_ham  = reduce(operator.mul, p_ham_list,  1)
-    p_mail_spam = reduce(operator.mul, p_spam_list, 1)
 
     # Apply Bayes' theorem
-    p_mail = p_mail_ham * training_data["p-ham"] + p_mail_spam * training_data["p-spam"]
-    p_ham_mail = (p_mail_ham * training_data["p-ham" ]) / p_mail
+    log_p_ham  = math.log(training_data["p-ham" ])
+    log_p_spam = math.log(training_data["p-spam"])
+    log_p_ham_list  = [math.log(h) for h in p_ham_list ]
+    log_p_spam_list = [math.log(s) for s in p_spam_list]
 
-    print(mail_path)
-    print(p_ham_mail)
+    exponent = log_p_spam + sum(log_p_spam_list) - log_p_ham - sum(log_p_ham_list)
+
+    p_ham_mail = 1 / (1 + math.pow(math.e, exponent))
 
     # Classify the mail
     if p_ham_mail > 0.5:
@@ -54,8 +54,6 @@ def main():
     except Exception as e:
         logging.error(e)
         exit(-1)
-
-    print([w for (w, p) in training_data["dict-spam"].items() if p == 1])
 
     # Classify the file
     result = classify(args.input_file, training_data)
