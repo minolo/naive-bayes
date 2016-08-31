@@ -10,8 +10,8 @@ def train(ham_files, spam_files):
     result = {}
 
     # Tokenize files
-    ham_files_generator  = (tokenize(f) for f in ham_files)
-    spam_files_generator = (tokenize(f) for f in spam_files)
+    ham_files_generator  = (tokenize(f, token_type="r1cw") for f in ham_files)
+    spam_files_generator = (tokenize(f, token_type="r1cw") for f in spam_files)
 
     # Flatten lists
     ham_files_all_tokens  = list(itertools.chain.from_iterable(ham_files_generator))

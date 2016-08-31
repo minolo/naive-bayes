@@ -2,7 +2,8 @@ import logging
 import re
 
 regexs = {
-    "basic": re.compile("\w+")
+    "basic": re.compile("\w+"),
+    "r1cw"  : re.compile("\w\w+")
     }
 
 def tokenize(file_path, token_type="basic"):

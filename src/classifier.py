@@ -15,7 +15,7 @@ def calculate_token_probability(mail_tokens, word, probability):
 def classify(mail_path, training_data):
     
     # Tokenize mail
-    mail_tokens = tokenize(mail_path)
+    mail_tokens = tokenize(mail_path, token_type="r1cw")
     
     # Calculate conditional probabilities
     p_ham_list  = [calculate_token_probability(mail_tokens, word, probability) for (word, probability) in training_data["dict-ham" ].items()]
