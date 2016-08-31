@@ -23,7 +23,33 @@ def evaluate(ham_mails, spam_mails, training_data):
     return cmat
 
 def main():
-    pass
+    argpar = argparse.ArgumentParser(description='Evaluator')
+    argpar.add_argument("-a", "--ham_path_list",
+                        required=True,
+                        help="Path to file with a list of paths to ham mails")
+    argpar.add_argument("-s", "--spam_path_list",
+                        required=True,
+                        help="Path to file with a list of paths to spam mails")
+    argpar.add_argument("-t", "--training_data",
+                        required=True,
+                        help="Path to file with the training data")
+    argpar.add_argument("-m", "--machine",
+                        action="store_true",
+                        help="Output in machine format")
+    args = argpar.parse_args()
+
+    cmat= evaluate(args.ham_path_list, args.spam_path_list, args.training_data)
+
+    if args.machine:
+        print("{} {} {} {}".format(cmat["ham"]["ham"], cmat["ham"]["spam"],
+                                   cmat["spam"]["ham"], cmat["spam"]["spam"]))
+    else:
+        print("     ham   spam\n"
+              "ham  {:3d}%  {:3d}%\n"
+              "spam {:3d}%  {:3d}%".format(cmat["ham"]["ham"]*100,
+                                           cmat["ham"]["spam"]*100,
+                                           cmat["spam"]["ham"]*100,
+                                           cmat["spam"]["spam"]*100))
 
 if __name__ == "__main__":
     main()
