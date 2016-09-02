@@ -6,7 +6,7 @@ regexs = {
     "r1cw"  : re.compile("\w\w+")
     }
 
-def tokenize(file_path, token_type="basic"):
+def tokenize(file_path, token_type):
     try:
         with open(file_path, "rb") as file:
             mail = file.read().decode("utf8", "ignore")

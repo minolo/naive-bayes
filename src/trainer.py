@@ -6,12 +6,12 @@ import collections
 
 from tokenizer import tokenize
 
-def train(ham_files, spam_files):
+def train(ham_files, spam_files, tk_type):
     result = {}
 
     # Tokenize files
-    ham_files_generator  = (tokenize(f, token_type="r1cw") for f in ham_files)
-    spam_files_generator = (tokenize(f, token_type="r1cw") for f in spam_files)
+    ham_files_generator  = (tokenize(f, token_type=tk_type) for f in ham_files)
+    spam_files_generator = (tokenize(f, token_type=tk_type) for f in spam_files)
 
     # Flatten lists
     ham_files_all_tokens  = list(itertools.chain.from_iterable(ham_files_generator))
@@ -43,6 +43,7 @@ def main():
     argpar.add_argument("-a", "--ham-list" , type=str, required=True, help="Ham file list" )
     argpar.add_argument("-s", "--spam-list", type=str, required=True, help="Spam file list")
     argpar.add_argument("-o", "--output"   , type=str, required=True, help="Output file"   )
+    argpar.add_argument("-t", "--tk-type"  , type=str, required=True, help="Tokenize method")
 
     # Parse the arguments
     args = argpar.parse_args()
@@ -62,7 +63,7 @@ def main():
         exit(-1)
 
     # Build the dictionary with the training data
-    result = train(ham_files, spam_files)
+    result = train(ham_files, spam_files, args.tk_type)
 
     # Save the result in the output file
     try:

@@ -11,10 +11,10 @@ def calculate_token_probability(mail_tokens, word, probability):
     else:
         return 1 - probability
 
-def classify(mail_path, training_data):
+def classify(mail_path, training_data, tk_type):
 
     # Tokenize mail
-    mail_tokens = tokenize(mail_path, token_type="r1cw")
+    mail_tokens = tokenize(mail_path, token_type=tk_type)
 
     # Calculate conditional probabilities
     p_ham_list  = [calculate_token_probability(mail_tokens, word, probability) for (word, probability) in training_data["dict-ham" ].items()]
@@ -45,6 +45,7 @@ def main():
     argpar = argparse.ArgumentParser()
     argpar.add_argument("-i", "--input-file",    type=str, required=True, help="Input file to classify")
     argpar.add_argument("-t", "--training-data", type=str, required=True, help="Training data file"    )
+    argpar.add_argument("-t", "--tk-type"      , type=str, required=True, help="Tokenize method")
 
     # Parse the arguments
     args = argpar.parse_args()
@@ -59,7 +60,7 @@ def main():
         exit(-1)
 
     # Classify the file
-    result = classify(args.input_file, training_data)
+    result = classify(args.input_file, training_data, args.tk_type)
 
     # Print result
     print("This file is classified as {}".format(result))

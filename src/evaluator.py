@@ -5,7 +5,7 @@ import pickle
 import multiprocessing
 from functools import partial
 
-def evaluate(num_threads, ham_mails, spam_mails, training_data):
+def evaluate(num_threads, ham_mails, spam_mails, training_data, tk_tpye):
 
     # Initialize confusion matrix
     cmat = {"ham" :{"ham":0, "spam":0},
@@ -13,8 +13,8 @@ def evaluate(num_threads, ham_mails, spam_mails, training_data):
 
     # Execute classifier threads
     with multiprocessing.Pool(num_threads) as pool:
-        ham_mails_classified  = pool.map(partial(classify, training_data=training_data), ham_mails )
-        spam_mails_classified = pool.map(partial(classify, training_data=training_data), spam_mails)
+        ham_mails_classified  = pool.map(partial(classify, training_data=training_data, tk_type=tk_tpye), ham_mails )
+        spam_mails_classified = pool.map(partial(classify, training_data=training_data, tk_type=tk_tpye), spam_mails)
 
     # Fill confusion matrix
     for classification in ham_mails_classified:
@@ -42,7 +42,7 @@ def main():
     argpar.add_argument("-s", "--spam_path_list",
                         required=True,
                         help="Path to file with a list of paths to spam mails")
-    argpar.add_argument("-t", "--training_data",
+    argpar.add_argument("-d", "--training_data",
                         required=True,
                         help="Path to file with the training data")
     argpar.add_argument("-m", "--machine",
@@ -50,6 +50,8 @@ def main():
                         help="Output in machine format")
     argpar.add_argument("-n", "--num-threads", nargs='?', const=1, type=int, default=multiprocessing.cpu_count(),
                         help="Number of threads for the evaluator loop")
+    argpar.add_argument("-t", "--tk-type",
+                        type=str, required=True, help="Tokenize method")
 
     # Parse the arguments
     args = argpar.parse_args()
@@ -78,7 +80,7 @@ def main():
         exit(-1)
 
     # Evaluate the performance of the algorithm
-    cmat = evaluate(args.num_threads, ham_files, spam_files, training_data)
+    cmat = evaluate(args.num_threads, ham_files, spam_files, training_data, args.tk_type)
 
     if args.machine:
         print("{};{};{};{}".format(cmat["ham"]["ham"], cmat["ham"]["spam"],
