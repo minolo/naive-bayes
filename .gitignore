@@ -5,3 +5,7 @@ res/dsets/enron?
 
 # Python
 src/__pycache__
+
+# Tests
+tests/*.out
+tests/*.png
