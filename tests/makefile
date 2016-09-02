@@ -4,7 +4,7 @@ TESTER=tester.sh
 PLOTTER=python3 ${SRC_DIR}/plotter.py
 
 TESTS=$(wildcard *.test)
-OUTS=$(wildcard *.out)
+OUTS=$(TESTS:.test=.out)
 PNGS=$(TESTS:.test=.png)
 
 # Do not delete my precious data if plotter fails! >:(
