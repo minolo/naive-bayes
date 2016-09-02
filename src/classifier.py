@@ -28,10 +28,13 @@ def classify(mail_path, training_data, tk_type):
 
     exponent = log_p_spam + sum(log_p_spam_list) - log_p_ham - sum(log_p_ham_list)
 
-    try:
+    # If the exponent has a low absolute value, use the formula directly
+    if abs(exponent) < 100:
         p_ham_mail = 1 / (1 + math.pow(math.e, exponent))
-    except Exception:
-        p_ham_mail = 0
+
+    # Otherwise, set p_ham_mail to 0 if it is positive and to 1 if it is negative (avoids range errors with math.pow)
+    else:
+        p_ham_mail = max(min(-exponent, 1), 0)
 
     # Classify the mail
     if p_ham_mail > 0.5:
