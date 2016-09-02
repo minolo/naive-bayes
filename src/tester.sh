@@ -1,4 +1,6 @@
-LAUNCHER="launcher.sh"
+#!/bin/bash
+
+LAUNCHER="./launcher.sh"
 
 pb() {
 	i=$1

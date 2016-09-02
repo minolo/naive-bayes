@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 DATA_DIR="../res/dsets"
 
@@ -9,7 +9,7 @@ TR_HAM="$TMP_DIR/tr_ham"
 TR_SPAM="$TMP_DIR/tr_spam"
 TR_DATA="$TMP_DIR/tr_data"
 
-PYTHON="python"
+PYTHON="python3"
 SPLITTER="$PYTHON splitter.py"
 TRAINER="$PYTHON trainer.py"
 EVALUATOR="$PYTHON evaluator.py"

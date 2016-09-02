@@ -1,7 +1,7 @@
 TESTS_DIR=../tests
 SRC_DIR=../src
 TESTER=tester.sh
-PLOTTER=python ${SRC_DIR}/plotter.py
+PLOTTER=python3 ${SRC_DIR}/plotter.py
 
 TESTS=$(wildcard *.test)
 OUTS=$(wildcard *.out)
@@ -16,7 +16,7 @@ all: ${PNGS}
 	$(PLOTTER) -d $<
 
 %.out: %.test
-	cd $(SRC_DIR) && $(TESTER) -t $(TESTS_DIR)/$<
+	cd $(SRC_DIR) && ./$(TESTER) -t $(TESTS_DIR)/$<
 
 clean:
 	@-rm -vf *.png

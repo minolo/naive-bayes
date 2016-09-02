@@ -3,6 +3,8 @@ import math
 import logging
 import argparse
 from itertools import groupby
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as mpl
 
 def transpose(l):
