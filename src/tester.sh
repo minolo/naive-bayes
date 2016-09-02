@@ -75,15 +75,17 @@ if [ -z "$nrep" ]; then
 fi
 
 # Execute tests
+test_num=$((${#args_list[@]} - 1))
 results=()
 echo
-pb 0 0 ${#args_list[@]} $nrep
-for ((test = 1; test < ${#args_list[@]}; test++)); do
+pb 0 0 $test_num $nrep
+for ((test = 1; test <= test_num; test++)); do
 	for ((rep = 0; rep < nrep; rep++)); do
 		results+=("$($LAUNCHER ${args_list[$test]})")
-		pb $test $rep ${#args_list[@]} $nrep
+		pb $test $rep $test_num $nrep
 	done
 done
+pb $test $rep $test_num $nrep
 
 # Save results
 > $out_file
