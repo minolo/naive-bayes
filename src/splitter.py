@@ -14,7 +14,7 @@ def check_args(args):
     # Check percentages
     if not args.enron:
         total_perc = args.eval_percent + args.train_percent
-        if total_perc <= 0 or total_perc >= 1:
+        if total_perc <= 0 or total_perc > 1:
             logging.error("Total percentages must be between 0 and 1")
             exit(-1)
 
