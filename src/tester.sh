@@ -82,10 +82,10 @@ pb 0 0 $test_num $nrep
 for ((test = 1; test <= test_num; test++)); do
 	for ((rep = 0; rep < nrep; rep++)); do
 		results+=("$($LAUNCHER ${args_list[$test]})")
-		pb $test $rep $test_num $nrep
+		pb $(($test - 1)) $rep $test_num $nrep
 	done
 done
-pb $test $rep $test_num $nrep
+pb $(($test - 1)) $rep $test_num $nrep
 
 # Save results
 > $out_file
