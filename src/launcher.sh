@@ -49,8 +49,8 @@ mkfifo $TR_DATA
 
 $SPLITTER -e$ev_perc -t$tr_perc -d$DATA_DIR $EV_HAM $EV_SPAM $TR_HAM $TR_SPAM &\
 $TRAINER -a$TR_HAM -s$TR_SPAM -o$TR_DATA &\
-cmd=$($EVALUATOR -a$EV_HAM -s$EV_SPAM -t$TR_DATA -m)
+cmat=$($EVALUATOR -a$EV_HAM -s$EV_SPAM -t$TR_DATA -m)
 
-echo "\"${not_def_parms[@]}\" $cmat"
+echo "${not_def_parms[@]};$cmat"
 
 rm -fr $TMP_DIR >& /dev/null

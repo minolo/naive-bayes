@@ -81,7 +81,7 @@ def main():
     cmat = evaluate(args.num_threads, ham_files, spam_files, training_data)
 
     if args.machine:
-        print("{} {} {} {}".format(cmat["ham"]["ham"], cmat["ham"]["spam"],
+        print("{};{};{};{}".format(cmat["ham"]["ham"], cmat["ham"]["spam"],
                                    cmat["spam"]["ham"], cmat["spam"]["spam"]))
     else:
         print("     ham      spam\n"
