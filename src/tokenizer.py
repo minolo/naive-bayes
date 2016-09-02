@@ -14,14 +14,15 @@ def m_group_words(regex_type, mail):
     return apply_regex(regex_type, mail)
 
 regexs = {
-    "basic"     : re.compile("\w+"),
-    "word2"     : re.compile("\w\w+"),
-    "alphnum2"  : re.compile("\w*[a-z_]{2}\w*"),
-    "alphnum3"  : re.compile("\w*[a-z_]{3}\w*"),
-    "alph3"     : re.compile("[a-z_]{3}[a-z_]*"),
-    "number"    : re.compile("[0-9]+" ),
-    "spamwords" : re.compile("(\w )+\w( |\n)" ),
-    "url"       : re.compile("(?:(?:https?|ftp|file) *: *\/\/|www\.|ftp\.) *(?:[-A-Z0-9+&@# %=~_|$?!:,.]* \/ *)*[-A-Z0-9+&@#%=~_|$?!:,.]*"),
+    "basic"        : re.compile("\w+"),
+    "word2"        : re.compile("\w\w+"),
+    "alphnum2"     : re.compile("\w*[a-z_]{2}\w*"),
+    "alphnum3"     : re.compile("\w*[a-z_]{3}\w*"),
+    "alph3"        : re.compile("[a-z_]{3}[a-z_]*"),
+    "number"       : re.compile("[0-9]+" ),
+    "spamwords"    : re.compile("\w (\w )+\w( |\n)" ),
+    "spamsymbols"  : re.compile("([!.] )+[!.]( |\n)" ),
+    "url"          : re.compile("(?:(?:https?|ftp|file) *: *\/\/|www\.|ftp\.) *(?:[-A-Z0-9+&@# %=~_|$?!:,.]* \/ *)*[-A-Z0-9+&@#%=~_|$?!:,.]*"),
     }
 
 strategies = {
@@ -34,9 +35,10 @@ strategies = {
         }
 
 group_words = {
-        "url"       : " ___url___ ",
-        "spamwords" : " ___spam_word___ ",
-        "number"    : " ___number___ ",
+        "url"         : " ___url___ ",
+        "spamwords"   : " ___spam_word___ ",
+        "spamsymbols" : " ___spam_symbols___ ",
+        "number"      : " ___number___ ",
         }
 
 def tokenize(file_path, token_type):
