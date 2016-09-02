@@ -9,6 +9,10 @@ while getopts ":t:n:" opt; do
 	case $opt in
 	t)
 		test_path=$OPTARG
+		if [ ! -f $test_path ]; then
+			echo "ERROR: \"$test_path\" not found"
+			exit -1
+		fi
 		;;
 	n)
 		nrep=$OPTARG
@@ -51,7 +55,7 @@ fi
 # Execute tests
 results=()
 for ((test = 1; test < ${#args_list[@]}; test++)); do
-	for ((rep = 1; rep < nrep; rep++)); do
+	for ((rep = 0; rep < nrep; rep++)); do
 		results+=("$($LAUNCHER ${args_list[$test]})")
 	done
 done
