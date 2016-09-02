@@ -28,7 +28,10 @@ def classify(mail_path, training_data):
 
     exponent = log_p_spam + sum(log_p_spam_list) - log_p_ham - sum(log_p_ham_list)
 
-    p_ham_mail = 1 / (1 + math.pow(math.e, exponent))
+    try:
+        p_ham_mail = 1 / (1 + math.pow(math.e, exponent))
+    except Exception:
+        p_ham_mail = 0
 
     # Classify the mail
     if p_ham_mail > 0.5:
