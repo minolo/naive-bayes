@@ -1,5 +1,25 @@
 LAUNCHER="launcher.sh"
 
+pb() {
+	i=$1
+	j=$2
+	maxi=$3
+	maxj=$4
+	t=$(($j + $i * $maxj))
+	maxt=$(($maxi * $maxj))
+
+	echo -en "\033[k"
+	echo -n "[$j/$maxj; $i/$maxi] ["
+	for ((ii=0; ii < $maxt; ii++)); do
+		if [ $ii -lt $t ]; then
+			echo -n "="
+		else
+			echo -n "-"
+		fi
+	done
+	echo -en "]\n"
+}
+
 usage() {
 	echo "$1 -t <test_path> [-n <number of repetitions>" >&2
 }
@@ -54,9 +74,12 @@ fi
 
 # Execute tests
 results=()
+echo
+pb 0 0 ${#args_list[@]} $nrep
 for ((test = 1; test < ${#args_list[@]}; test++)); do
 	for ((rep = 0; rep < nrep; rep++)); do
 		results+=("$($LAUNCHER ${args_list[$test]})")
+		pb $test $rep ${#args_list[@]} $nrep
 	done
 done
 
