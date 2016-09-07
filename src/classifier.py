@@ -17,8 +17,11 @@ def classify(mail_path, training_data, tk_type):
     mail_tokens = tokenize(mail_path, token_type=tk_type)
 
     # Calculate conditional probabilities
-    p_ham_list  = [calculate_token_probability(mail_tokens, word, probability) for (word, probability) in training_data["dict-ham" ].items()]
-    p_spam_list = [calculate_token_probability(mail_tokens, word, probability) for (word, probability) in training_data["dict-spam"].items()]
+    #p_ham_list  = [calculate_token_probability(mail_tokens, word, probability) for (word, probability) in training_data["dict-ham" ].items()]
+    #p_spam_list = [calculate_token_probability(mail_tokens, word, probability) for (word, probability) in training_data["dict-spam"].items()]
+
+    p_ham_list  = [training_data["dict-ham" ][token] for token in mail_tokens if token in training_data["dict-ham" ]]
+    p_spam_list = [training_data["dict-spam"][token] for token in mail_tokens if token in training_data["dict-spam"]]
 
     # Apply Bayes' theorem
     log_p_ham  = math.log(training_data["p-ham" ])
@@ -48,7 +51,7 @@ def main():
     argpar = argparse.ArgumentParser()
     argpar.add_argument("-i", "--input-file",    type=str, required=True, help="Input file to classify")
     argpar.add_argument("-t", "--training-data", type=str, required=True, help="Training data file"    )
-    argpar.add_argument("-t", "--tk-type"      , type=str, required=True, help="Tokenize method")
+    argpar.add_argument("-k", "--tk-type"      , type=str, required=True, help="Tokenize method")
 
     # Parse the arguments
     args = argpar.parse_args()

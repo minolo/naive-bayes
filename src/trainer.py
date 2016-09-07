@@ -3,36 +3,55 @@ import argparse
 import pickle
 import itertools
 import collections
+import math
 
 from tokenizer import tokenize
 
+def logdiff(p):
+    return math.log(1 - p) - math.log(p)
+
+def spamicity(p_ham, p_spam, p_token_ham, p_token_spam):
+    return (p_token_spam * p_spam) / (p_token_spam * p_spam + p_token_ham * p_ham)
+
+def probability(occurrences, total, vocabulary_size):
+    return (occurrences + 1) / (total + vocabulary_size)
+
 def train(ham_files, spam_files, tk_type):
-    result = {}
+
+    # Calculate class probability
+    num_mails_ham  = len(ham_files)
+    num_mails_spam = len(spam_files)
+    num_mails_total = num_mails_ham + num_mails_spam
+    p_ham  = num_mails_ham  / num_mails_total
+    p_spam = num_mails_spam / num_mails_total
 
     # Tokenize files
-    ham_files_generator  = (tokenize(f, token_type=tk_type) for f in ham_files)
-    spam_files_generator = (tokenize(f, token_type=tk_type) for f in spam_files)
+    ham_tokens  = (tokenize(f, token_type=tk_type) for f in ham_files)
+    spam_tokens = (tokenize(f, token_type=tk_type) for f in spam_files)
 
-    # Flatten lists
-    ham_files_all_tokens  = list(itertools.chain.from_iterable(ham_files_generator))
-    spam_files_all_tokens = list(itertools.chain.from_iterable(spam_files_generator)) 
+    # Collect all tokens
+    ham_all_tokens  = itertools.chain.from_iterable(ham_tokens)
+    spam_all_tokens = itertools.chain.from_iterable(spam_tokens)
 
-    # Count word occurrences
-    ham_tokens_counter  = collections.Counter(ham_files_all_tokens)
-    spam_tokens_counter = collections.Counter(spam_files_all_tokens)
+    # Count token occurrences
+    ham_tokens_counter  = collections.Counter(ham_all_tokens)
+    spam_tokens_counter = collections.Counter(spam_all_tokens)
 
-    # Fill result
-    number_ham  = len(ham_files )
-    number_spam = len(spam_files)
-    total_files = number_ham + number_spam
-    result["p-ham"]  = number_ham  / total_files
-    result["p-spam"] = number_spam / total_files
-    result["dict-ham"]  = dict([(word, occurrences / number_ham ) for (word, occurrences) in dict(ham_tokens_counter ).items()])
-    result["dict-spam"] = dict([(word, occurrences / number_spam) for (word, occurrences) in dict(spam_tokens_counter).items()])
+    # Build vocabulary
+    vocabulary = set(ham_tokens_counter.keys()) | set(spam_tokens_counter.keys())
+    vocabulary_size = len(vocabulary)
 
-    # Remove words with probability 1
-    result["dict-ham" ] = dict([(word, probability) for (word, probability) in result["dict-ham" ].items() if probability < 1])
-    result["dict-spam"] = dict([(word, probability) for (word, probability) in result["dict-spam"].items() if probability < 1])
+    # Calculate token probability
+    num_tokens_ham  = sum(ham_tokens_counter.values())
+    num_tokens_spam = sum(spam_tokens_counter.values())
+    probabilities_ham  = dict((token, probability(ham_tokens_counter[token] , num_tokens_ham , vocabulary_size)) for token in vocabulary)
+    probabilities_spam = dict((token, probability(spam_tokens_counter[token], num_tokens_spam, vocabulary_size)) for token in vocabulary)
+
+    # Calculate token spamicity
+    token_spamicity = dict((token, spamicity(p_ham, p_spam, probabilities_ham[token], probabilities_spam[token])) for token in vocabulary)
+
+    # Precalculate log diff for classification
+    result = dict((token, logdiff(token_spamicity[token])) for token in vocabulary)
 
     return result
 

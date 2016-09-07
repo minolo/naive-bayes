@@ -5,7 +5,7 @@ import pickle
 import multiprocessing
 from functools import partial
 
-def evaluate(num_threads, ham_mails, spam_mails, training_data, tk_tpye):
+def evaluate(num_threads, ham_mails, spam_mails, training_data, tk_type):
 
     # Initialize confusion matrix
     cmat = {"ham" :{"ham":0, "spam":0},
@@ -13,8 +13,8 @@ def evaluate(num_threads, ham_mails, spam_mails, training_data, tk_tpye):
 
     # Execute classifier threads
     with multiprocessing.Pool(num_threads) as pool:
-        ham_mails_classified  = pool.map(partial(classify, training_data=training_data, tk_type=tk_tpye), ham_mails )
-        spam_mails_classified = pool.map(partial(classify, training_data=training_data, tk_type=tk_tpye), spam_mails)
+        ham_mails_classified  = pool.map(partial(classify, training_data=training_data, tk_type=tk_type), ham_mails )
+        spam_mails_classified = pool.map(partial(classify, training_data=training_data, tk_type=tk_type), spam_mails)
 
     # Fill confusion matrix
     for classification in ham_mails_classified:
