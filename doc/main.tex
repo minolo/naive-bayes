@@ -1,0 +1,68 @@
+\documentclass[pdftex,a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-noquoting]{babel}
+\usepackage{graphicx}		% Inclusión de imágenes
+\usepackage{import}		% Inclusión con rutas relativas
+\usepackage{enumitem}		% Cambiar la separación entre items
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{algorithm}
+\usepackage{algpseudocode}	% Pseudocódigo
+\usepackage{fancyhdr}           % Cabecera y pie de página
+\usepackage{bm}
+\usepackage[nottoc]{tocbibind}
+\usepackage{pdflscape}
+
+% Enlaces y atributos PDF
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{color}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	citecolor=blue,
+	filecolor=blue,
+	urlcolor=blue,
+	pdftitle=Bayesian spam filter,
+	pdfauthor=Carlos Falgueras García and Manuel Caballero Sánchez,
+	pdfsubject=Proyecto de IA1,
+	pdfkeywords=minimax blokus
+}
+
+\setlength{\headheight}{16pt} % Para callar un warning
+\pagestyle{fancy} % Cabecera y pie de página por defecto
+
+\bibliographystyle{plain}
+% \bibliographystyle{unsrt}
+\addto{\captionsspanish}{\renewcommand{\refname}{Bibliografía}}
+
+\title{{\Huge Filtro bayesiano anti-spam} \\ {\large\slshape Trabajo IA2}}
+\author{Carlos Falgueras García \and Manuel Caballero Sánchez}
+\date{}
+
+\setlist[itemize]{noitemsep, topsep=0em}
+
+\begin{document}
+\maketitle
+\clearpage
+\tableofcontents
+\setlength{\parskip}{1em}
+\addcontentsline{toc}{part}{Índice}
+\thispagestyle{empty} %Eliminamos la cabecera y la enumeración del índice
+\clearpage
+
+\import{./}{introduccion}
+\clearpage
+\import{./}{algoritmo}
+\clearpage
+\import{./}{implementacion}
+\clearpage
+\import{./}{evaluacion}
+% \import{./}{conclusiones}
+\clearpage
+\import{./}{manual}
+\clearpage
+\nocite{*}
+\bibliography{bib}
+
+\end{document}

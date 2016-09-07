@@ -1,0 +1,94 @@
+\section{Algoritmo}
+
+\subsection{Descripción}
+
+\textbf{Naïve-Bayes} es una aplicación del \textit{teorema de Bayes} asumiendo
+que todos los eventos a estudio son independientes entre si (de ahí el
+calificativo de \textit{ingenuo}).
+
+El teorema de Bayes vincula la probabilidad de $A$ dado $B$ con la probabilidad
+de $B$ dado $A$ mediante la siguiente fórmula:
+
+\begin{equation}
+	\label{eq:bayes}
+	P(A_i | B) = \frac{P(B | A_i) P(A_i)}{P(B)}
+\end{equation}
+
+Un clasificador de \textit{Naïve-Bayes} asume que la presencia o ausencia de
+una característica particular no está relacionada con la presencia o ausencia
+de cualquier otra característica, dada la clase variable. Una ventaja del
+clasificador de Bayes ingenuo es que solo se requiere una pequeña cantidad de
+datos de entrenamiento para estimar los parámetros (las medias y las varianzas
+de las variables) necesarias para la clasificación.
+
+\subsection[Probabilidad de una palabra]{Probabilidad de aparición de una palabra en una categoría}
+
+Para calcular la probabilidad de que una palabra dada ($w$) pertenezca a una
+clase u otra (spam o ham) vamos a utilizar la siguiente fórmula:
+
+\begin{equation}
+	\label{eq:prob-palabra}
+	P(w_i|C) = \frac{count(w_i, C)}{\displaystyle\sum_{w \in V}{count(w, C)}}
+\end{equation}
+
+Donde $V$ es el conjunto de las palabras de todas las categorías.
+
+\subsection{Spamicidad de una palabra}
+
+A la probabilidad de que un correo sea spam, sabiendo que contiene una palabra
+específica, se le denomina \textbf{spamicity}~\cite{eberhardt2015bayesian}.
+Posteriormente combinaremos estas probabilidades para calcular la probabilidad
+de que un correo sea spam. Para calcular la \textit{spamicidad de una palabra}
+utilizamos la siguiente fórmula, que es una aplicación directa del teorema de
+Bayes (ver~\ref{eq:bayes}):
+
+\begin{equation}
+	\label{eq:spamicity}
+	P(S | W) = \frac{P(W | S) P(S)}{P(W | S) P(S) + P(W | H) P(H)}
+\end{equation}
+
+\textbf{Donde:}
+\begin{itemize}
+	\item $\bm{P(S | W)}$ es la probabilidad de que un correo sea spam si contiene la palabra $W$
+	\item $\bm{P(W | S)}$ es la probabilidad de que la palabra $W$ pertenezca a un correo de spam
+	\item $\bm{P(W | H)}$ es la probabilidad de que la palabra $W$ pertenezca a un correo de ham
+	\item $\bm{P(S)}$ es la probabilidad de que un mensaje sea spam
+	\item $\bm{P(H)}$ es la probabilidad de que un mensaje sea ham
+\end{itemize}
+
+\subsection{Combinación de probabilidades}
+
+Bajo la asunción de que todas las palabras del correo son \textit{eventos
+independiente}, podemos combinar las spamicidades de cada palabra del mensaje
+calculadas con la ecuación~\ref{eq:spamicity} mediante la siguiente
+fórmula~\cite{graham2003probability}:
+
+\begin{equation}
+	\label{eq:comb-probs}
+	P(S|D) = \frac{\displaystyle\prod_{w \in D}{P(S|w)}}{\displaystyle\prod_{w \in D}{P(S|w)} + \displaystyle\prod_{w \in D}{\left(1 - P(S|w)\right)}}
+\end{equation}
+
+\subsection{Problema de precisión}
+
+Dado que el número de tokens de un mensaje puede ser arbitrariamente grande, los
+productorios de la ecuación~\ref{eq:comb-probs} podrían llegar a desbordar el
+tipo de dato que se está utilizando. Para minimizar esta carencia de la
+tecnología usamos esta fórmula que deriva de la anterior haciendo uso de
+logaritmos:
+
+\begin{gather}
+	P(S|D) = \frac{1}{1 + e^\eta}\\\nonumber
+	\\
+	\eta = \sum_{w \in D}{\left[\ln\left(1 - P(S|w)\right) - \ln(P(S|w))\right]}
+\end{gather}
+
+\subsection{Problema de probabilidad cero}
+
+Cuando una palabra aparece solo en una categoría, la probabilidad de que
+aparezca en la otra es cero. Para lidiar con este problema utilizamos un
+suavizado laplaciano en la ecuación~\ref{eq:prob-palabra}:
+
+\begin{equation}
+	\label{eq:prob-palabra-laplace}
+	P(w_i|C) = \frac{count(w_i, C) + 1}{\displaystyle\sum_{w \in V}{count(w, C)} + |V|} \cite{hovold2005naive}
+\end{equation}

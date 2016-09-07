@@ -9,3 +9,7 @@ src/__pycache__
 # Tests
 tests/*.out
 tests/*.png
+
+# Latex
+doc/tmp.latex
+doc/*.pdf

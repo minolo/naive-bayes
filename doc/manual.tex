@@ -1,0 +1,143 @@
+\section{Manual}
+
+\subsection{Requisitos}
+
+\begin{itemize}
+	\item Linux
+	\item Bash
+	\item Latex (recomendado TeX Live)
+	\item Make
+	\item Python 3
+	\item matplotlib (librería de python)
+\end{itemize}
+
+\subsection{Árbol del proyecto}
+
+\begin{itemize}
+	\item \texttt{./}: Raíz del proyecto
+	\begin{itemize}
+		\item \texttt{./Makefile}: Makefile principal
+		\item \texttt{./src}: Código del proyecto
+		\item \texttt{./tests}: Ficheros y salidas de tests
+		\begin{itemize}
+			\item \texttt{./tests/makefile}: Makefile específico
+				para los tests. Permite lanzar un tests
+				específico
+		\end{itemize}
+		\item \texttt{./doc}: Ficheros \texttt{.tex} y makefile para
+			generar la documentación
+		\item \texttt{./res}: Recursos
+		\begin{itemize}
+			\item \texttt{./res/bib}: Bibliografía, script y
+				makefile necesarios para descargarla
+				automáticamente
+			\item \texttt{./res/dsets}: Base de datos de correos y
+				makefile necesario para descargarla
+		\end{itemize}
+	\end{itemize}
+\end{itemize}
+
+\subsection{Generación y ejecución}
+
+Mediante el programa \textit{Make} puede automáticamente descargar los recursos
+y bibliografía necesarios, lanzar todos los tests y generar esta documentación.
+Para ello únicamente debe ejecutar el comando \texttt{make} o \texttt{make all}
+y tener paciencia.
+
+Además del objetivo ``all'', puede indicar a make que únicamente genere alguno
+de los siguientes objetivos:
+
+\begin{itemize}
+	\item \textbf{all:} Genera la documentación y descarga los recursos
+	\item \textbf{doc:} Genera esta documentación. Antes ejecuta todos lost
+		tests para obtener los \texttt{.png} de las gráficas
+	\item \textbf{tests:} Lanza el \textit{Tester} por cada archivo
+		\texttt{.test} que se encuentre dentro de la carpet
+		\texttt{./tests}
+	\item \textbf{download\_res:} Descarga la base de datos de correos, el
+		enunciado del trabajo y los artículos recomendados.
+	\item \textbf{clean:} Borra todos los datos autogenerados (excepto las
+		salidas de los tests)
+	\item \textbf{mrproper:} Borra todos los datos autogenerados incluyendo
+		las salidas de los tests
+\end{itemize}
+
+Con \texttt{make -j<num hilos>} se pueden ejecutar los objetivos en paralelo,
+siempre que las dependencias lo permitan.
+
+\subsubsection{Documentación}
+
+La documentación del proyecto que está leyendo ahora mismo se ha creado con
+\LaTeX~y la compilación está automatizada mediante \textit{Make}. Dado que se
+incluyen imágenes con las gráficas de los tests realizados, antes de generar
+este pdf se lanzan automáticamente todos los tests.
+
+Puede generar la documentación con el objetivo ``doc'': \texttt{make doc}
+
+\footnotetext{Todos los módulos principales cuentan con el parámetro `-h' que
+imprime una breve explicación de su utilización.}
+\def\helpvfn{\value{footnote}}
+\def\helpfn{\footnotemark[\helpvfn]}
+\subsubsection{Tester}
+
+Un fichero de test consiste en una primera línea indicando el número de veces
+que se va a ejecutar cada configuración y una lista de configuraciones,
+consistente en líneas que van a pasarse como parámetros al \textit{Launcher}
+
+Todos los tests pueden ser ejecutados en paralelo por \textit{Make} si se llama
+con la opción `-j': \texttt{make -j4 tests}
+
+Puede lanzar manualmente el módulo \textit{Tester} indicándole la ruta a un
+archivo de tests\helpfn:
+
+\subsubsection{Launcher}
+
+Separa el conjunto de entrenamiento de la forma en la que le indiquemos, entrena
+según los parámetros que le pasemos y lo evalúa para devolvernos una matriz de
+confusión.
+
+Por defecto toma el 20\% de la base de datos como conjunto de evaluación y el
+80\% como conjunto de entrenamiento, usa la estrategia de tokenización ``basic''
+y usa un umbral de 0.1. Estos parámetros se pueden cambiar mediante
+parámetros\helpfn. Este script espera encontrar la base de datos de correos en
+la ruta \texttt{./res/dsets}.
+
+Ejemplo de uso: \texttt{./launcher.sh -u 0.5}
+
+\subsubsection{Splitter}
+
+Divide la base de datos de mensajes según le especifiquemos. Podemos dividir
+especificando los porcentajes del conjunto de evaluación y entrenamiento, o
+elegir los enron del 1 al 5 como entrenamiento y el sexto como
+evaluación\helpfn. Genera 4 archivos con los nombres que se le especifiquen.
+
+Ejemplo de uso: \texttt{python3 splitter.py -e 0.7 -t 0.2 -d ../res/dsets ev\_ham\_list.out ev\_spam\_list.out tr\_ham\_list.out tr\_spam\_list.out}
+
+\subsubsection{Trainer}
+
+Este módulo necesita recibir dos listas de rutas a correos de spam y ham que
+utilizara como base de entrenamiento. Estas se pueden conseguir mediante el
+script \textit{Splitter} o con cualquier otra herramienta (el comando
+\textit{find} por ejemplo). Como salida genera un fichero binario que codifica
+un diccionario de python, este archivo únicamente puede leerlo los módulos
+\textit{Evaluator} y \textit{Classifier}.
+
+Ejemplo de uso: \texttt{python3 trainer.py -a ham\_list.txt -s spam\_list.txt -o training\_data.out -k basic}
+
+\subsubsection{Evaluator}
+
+Dado unos datos de entrenamiento y un conjunto de evaluación, este módulo
+clasifica cada uno de los correos del conjunto recibido para generar la matriz
+de confusión. Los datos de entrenamientos es el fichero generado por el
+\textit{Trainer} y el conjunto de evaluación es una lista de rutas a correos
+generada por \textit{Splitter}, o por cualquer otra herramienta.
+
+Ejemplo de uso\helpfn: \texttt{python3 evaluator.py -a ham\_list.txt -s spam\_list.txt -o training\_data.out -k basic}
+
+\subsubsection{Classifier}
+
+Dado un correo y unos datos de entrenamiento, decide si este es o no spam. Los
+datos de entrenamiento son los que genera el \textit{Trainer} y el correo es
+la ruta a cualquier archivo de texto.
+
+Ejemplo de uso\helpfn: \texttt{python3 classifier.py -i correo.txt -t training\_data.out -u 0.1}
