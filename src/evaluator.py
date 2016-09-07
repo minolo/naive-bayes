@@ -2,19 +2,17 @@ from classifier import classify
 import argparse
 import logging
 import pickle
-import multiprocessing
 from functools import partial
 
-def evaluate(num_threads, ham_mails, spam_mails, training_data, tk_type):
+def evaluate(ham_mails, spam_mails, training_data, tk_type):
 
     # Initialize confusion matrix
     cmat = {"ham" :{"ham":0, "spam":0},
             "spam":{"ham":0, "spam":0}}
 
-    # Execute classifier threads
-    with multiprocessing.Pool(num_threads) as pool:
-        ham_mails_classified  = pool.map(partial(classify, training_data=training_data, tk_type=tk_type), ham_mails )
-        spam_mails_classified = pool.map(partial(classify, training_data=training_data, tk_type=tk_type), spam_mails)
+    # Classify mails
+    ham_mails_classified  = map(partial(classify, training_data=training_data, tk_type=tk_type), ham_mails )
+    spam_mails_classified = map(partial(classify, training_data=training_data, tk_type=tk_type), spam_mails)
 
     # Fill confusion matrix
     for classification in ham_mails_classified:
@@ -48,8 +46,6 @@ def main():
     argpar.add_argument("-m", "--machine",
                         action="store_true",
                         help="Output in machine format")
-    argpar.add_argument("-n", "--num-threads", nargs='?', const=1, type=int, default=multiprocessing.cpu_count(),
-                        help="Number of threads for the evaluator loop")
     argpar.add_argument("-t", "--tk-type",
                         type=str, required=True, help="Tokenize method")
 
@@ -79,9 +75,10 @@ def main():
         logging.error(e)
         exit(-1)
 
-    # Evaluate the performance of the algorithm
-    cmat = evaluate(args.num_threads, ham_files, spam_files, training_data, args.tk_type)
+    # Compute the confusion matrix
+    cmat = evaluate(ham_files, spam_files, training_data, args.tk_type)
 
+    # Print performance data
     if args.machine:
         print("{};{};{};{}".format(cmat["ham"]["ham"], cmat["ham"]["spam"],
                                    cmat["spam"]["ham"], cmat["spam"]["spam"]))
@@ -92,6 +89,9 @@ def main():
                                            cmat["ham"]["spam"]*100,
                                            cmat["spam"]["ham"]*100,
                                            cmat["spam"]["spam"]*100))
+        print()
+        print("Correctly classified: {:.2f}%".format((cmat["ham"]["ham"] + cmat["spam"]["spam"]) * 100))
+
 
 if __name__ == "__main__":
     main()
