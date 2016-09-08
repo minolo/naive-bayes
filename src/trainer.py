@@ -7,7 +7,7 @@ import math
 
 from tokenizer import tokenize
 
-def logdiff(p):
+def difflog(p):
     return math.log(1 - p) - math.log(p)
 
 def spamicity(p_ham, p_spam, p_token_ham, p_token_spam):
@@ -50,8 +50,8 @@ def train(ham_files, spam_files, tk_type):
     # Calculate token spamicity
     token_spamicity = dict((token, spamicity(p_ham, p_spam, probabilities_ham[token], probabilities_spam[token])) for token in vocabulary)
 
-    # Precalculate log diff for classification
-    result = dict((token, logdiff(token_spamicity[token])) for token in vocabulary)
+    # Precalculate difference of logarithms for classification
+    result = dict((token, difflog(token_spamicity[token])) for token in vocabulary)
 
     return result
 
