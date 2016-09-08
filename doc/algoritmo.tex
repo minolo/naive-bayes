@@ -14,17 +14,18 @@ de $B$ dado $A$ mediante la siguiente fórmula:
 	P(A_i | B) = \frac{P(B | A_i) P(A_i)}{P(B)}
 \end{equation}
 
-Un clasificador de \textit{Naïve-Bayes} asume que la presencia o ausencia de
-una característica particular no está relacionada con la presencia o ausencia
-de cualquier otra característica, dada la clase variable. Una ventaja del
+Un clasificador de \textit{Naïve-Bayes} asume que la presencia o ausencia de una
+característica particular no está relacionada con la presencia o ausencia de
+cualquier otra característica, dada la clase variable. Una ventaja del
 clasificador de Bayes ingenuo es que solo se requiere una pequeña cantidad de
-datos de entrenamiento para estimar los parámetros (las medias y las varianzas
-de las variables) necesarias para la clasificación.
+datos de entrenamiento para estimar los parámetros necesarias para la
+clasificación.
 
 \subsection[Probabilidad de una palabra]{Probabilidad de aparición de una palabra en una categoría}
 
-Para calcular la probabilidad de que una palabra dada ($w$) pertenezca a una
-clase u otra (spam o ham) vamos a utilizar la siguiente fórmula:
+Para calcular la probabilidad condicionada de que una palabra dada ($w$)
+pertenezca a una clase u otra (spam o ham) vamos a utilizar la siguiente
+fórmula:
 
 \begin{equation}
 	\label{eq:prob-palabra}
@@ -50,8 +51,8 @@ Bayes (ver~\ref{eq:bayes}):
 \textbf{Donde:}
 \begin{itemize}
 	\item $\bm{P(S | W)}$ es la probabilidad de que un correo sea spam si contiene la palabra $W$
-	\item $\bm{P(W | S)}$ es la probabilidad de que la palabra $W$ pertenezca a un correo de spam
-	\item $\bm{P(W | H)}$ es la probabilidad de que la palabra $W$ pertenezca a un correo de ham
+	\item $\bm{P(W | S)}$ es la probabilidad de que la palabra $W$ aparezca en un correo de spam
+	\item $\bm{P(W | H)}$ es la probabilidad de que la palabra $W$ aparezca en un correo de ham
 	\item $\bm{P(S)}$ es la probabilidad de que un mensaje sea spam
 	\item $\bm{P(H)}$ es la probabilidad de que un mensaje sea ham
 \end{itemize}
@@ -59,7 +60,7 @@ Bayes (ver~\ref{eq:bayes}):
 \subsection{Combinación de probabilidades}
 
 Bajo la asunción de que todas las palabras del correo son \textit{eventos
-independiente}, podemos combinar las spamicidades de cada palabra del mensaje
+independientes}, podemos combinar las spamicidades de cada palabra del mensaje
 calculadas con la ecuación~\ref{eq:spamicity} mediante la siguiente
 fórmula~\cite{graham2003probability}:
 
@@ -85,8 +86,9 @@ logaritmos:
 \subsection{Problema de probabilidad cero}
 
 Cuando una palabra aparece solo en una categoría, la probabilidad de que
-aparezca en la otra es cero. Para lidiar con este problema utilizamos un
-suavizado laplaciano en la ecuación~\ref{eq:prob-palabra}:
+aparezca en la otra es cero, haciendo que el resultado de la
+ecuación~\ref{eq:comb-probs} valga cero. Para lidiar con este problema
+utilizamos un suavizado laplaciano en la ecuación~\ref{eq:prob-palabra}:
 
 \begin{equation}
 	\label{eq:prob-palabra-laplace}

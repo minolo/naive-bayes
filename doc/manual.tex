@@ -111,7 +111,7 @@ especificando los porcentajes del conjunto de evaluación y entrenamiento, o
 elegir los enron del 1 al 5 como entrenamiento y el sexto como
 evaluación\helpfn. Genera 4 archivos con los nombres que se le especifiquen.
 
-Ejemplo de uso: \texttt{python3 splitter.py -e 0.7 -t 0.2 -d ../res/dsets ev\_ham\_list.out ev\_spam\_list.out tr\_ham\_list.out tr\_spam\_list.out}
+Ejemplo de uso: \texttt{python3 splitter.py -e 0.7 -t 0.2 -d ../res/dsets ev\_ham\_list.txt ev\_spam\_list.txt tr\_ham\_list.txt tr\_spam\_list.txt}
 
 \subsubsection{Trainer}
 
@@ -119,20 +119,20 @@ Este módulo necesita recibir dos listas de rutas a correos de spam y ham que
 utilizara como base de entrenamiento. Estas se pueden conseguir mediante el
 script \textit{Splitter} o con cualquier otra herramienta (el comando
 \textit{find} por ejemplo). Como salida genera un fichero binario que codifica
-un diccionario de python, este archivo únicamente puede leerlo los módulos
+un diccionario de Python, este archivo únicamente puede leerlo los módulos
 \textit{Evaluator} y \textit{Classifier}.
 
-Ejemplo de uso: \texttt{python3 trainer.py -a ham\_list.txt -s spam\_list.txt -o training\_data.out -k basic}
+Ejemplo de uso: \texttt{python3 trainer.py -a tr\_ham\_list.txt -s tr\_spam\_list.txt -o training\_data.out -k basic}
 
 \subsubsection{Evaluator}
 
 Dado unos datos de entrenamiento y un conjunto de evaluación, este módulo
 clasifica cada uno de los correos del conjunto recibido para generar la matriz
-de confusión. Los datos de entrenamientos es el fichero generado por el
+de confusión. Los datos de entrenamiento es el fichero generado por el
 \textit{Trainer} y el conjunto de evaluación es una lista de rutas a correos
-generada por \textit{Splitter}, o por cualquer otra herramienta.
+generada por \textit{Splitter}, o por cualquier otra herramienta.
 
-Ejemplo de uso\helpfn: \texttt{python3 evaluator.py -a ham\_list.txt -s spam\_list.txt -o training\_data.out -k basic}
+Ejemplo de uso\helpfn: \texttt{python3 evaluator.py -a ev\_ham\_list.txt -s ev\_spam\_list.txt -o training\_data.out}
 
 \subsubsection{Classifier}
 

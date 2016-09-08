@@ -24,11 +24,11 @@ información a través de parámetros o archivos.
 
 Los principales módulos \textit{Splitter}, \textit{Trainer}, \textit{Classifier}
 y \textit{Evaluator} generan y reciben archivos. Debido a que van a realizarse
-muchos test, se ha optimizado este intercambio de información mediante el uso de
-las \textbf{tuberías} que nos ofrece Linux. De esta forma la información
+muchos tests, se ha optimizado este intercambio de información mediante el uso
+de las \textbf{tuberías} que nos ofrece Linux. De esta forma la información
 generada nunca llega a escribirse a disco: el módulo que la consume la recibe
 directamente cuando el módulo que la genera la escribe en la tubería. Esto no
-quita que no se puedan utilizar sin ellas y de forma independiente.
+quita que se puedan utilizar sin ellas y de forma independiente.
 
 En la figura~\ref{fig:esquema} se pueden observar los distintos módulos y el
 flujo de información entre ellos. Las cajas representan a los módulos y las
@@ -50,7 +50,7 @@ elipses a los mensajes.
 		\textbf{conjuntos de evaluación y entrenamiento}
 	\item \textbf{Parámetros}: Porcentajes del conjunto de evaluación y
 		entrenamiento, o selección $enron[1-5] \rightarrow
-		\text{evaluación},\ enron6 \rightarrow \text{entrenamiento}$
+		\text{entrenamiento},\ enron6 \rightarrow \text{evaluación}$
 	\item \textbf{Entradas}: Base de datos de correos
 	\item \textbf{Salidas}: 4 listas de rutas a correos: evaluación/spam,
 		evaluación/ham y entrenamiento/spam
@@ -77,7 +77,7 @@ La salida del trainer se pasa al \textit{Evaluator} mediante una tubería.
 
 \begin{itemize}
 	\item \textbf{Funcionalidad}: Clasificar un correo como spam o ham
-	\item \textbf{Parámetros}: Umbral y tipo de tokenización
+	\item \textbf{Parámetros}: Umbral
 	\item \textbf{Entradas}: Datos de entrenamiento y ruta del correo a
 		clasificar
 	\item \textbf{Salidas}: Una cadena: ``ham'' o ``spam''
@@ -88,7 +88,7 @@ La salida del trainer se pasa al \textit{Evaluator} mediante una tubería.
 \begin{itemize}
 	\item \textbf{Funcionalidad}: Generar la matriz de confusión dado un
 		conjunto de evaluación
-	\item \textbf{Parámetros}: Umbral y tipo de tokenización
+	\item \textbf{Parámetros}: Umbral
 	\item \textbf{Entradas}: Listas de rutas a correos de spam y de ham
 	\item \textbf{Salidas}: Los cuatro números de la matriz de confusión en
 		tanto por uno
