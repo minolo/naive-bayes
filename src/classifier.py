@@ -5,7 +5,7 @@ import math
 
 from tokenizer import tokenize
 
-def classify(mail_path, training_data, tk_type):
+def classify(mail_path, training_data, tk_type, threshold):
 
     # Tokenize mail
     mail_tokens = tokenize(mail_path, token_type=tk_type)
@@ -25,7 +25,7 @@ def classify(mail_path, training_data, tk_type):
         probability = max(min(-exponent, 1), 0)
 
     # Classify the mail
-    if probability > 0.5:
+    if probability > threshold:
         return "spam"
     else:
         return "ham"
@@ -34,9 +34,10 @@ def main():
 
     # Define the program arguments for the parser
     argpar = argparse.ArgumentParser()
-    argpar.add_argument("-i", "--input-file",    type=str, required=True, help="Input file to classify")
-    argpar.add_argument("-t", "--training-data", type=str, required=True, help="Training data file"    )
-    argpar.add_argument("-k", "--tk-type"      , type=str, required=True, help="Tokenize method")
+    argpar.add_argument("-i", "--input-file",    type=str,   required=True, help="Input file to classify")
+    argpar.add_argument("-t", "--training-data", type=str,   required=True, help="Training data file")
+    argpar.add_argument("-k", "--tk-type",       type=str,   required=True, help="Tokenize method")
+    argpar.add_argument("-u", "--threshold",     type=float, required=True, help="Threshold to considerate a mail spam")
 
     # Parse the arguments
     args = argpar.parse_args()
@@ -51,7 +52,8 @@ def main():
         exit(-1)
 
     # Classify the file
-    result = classify(args.input_file, training_data, args.tk_type)
+    result =\
+        classify(args.input_file, training_data, args.tk_type, args.threshold)
 
     # Print result
     print("This file is classified as {}".format(result))

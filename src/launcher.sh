@@ -14,10 +14,10 @@ SPLITTER="$PYTHON splitter.py"
 TRAINER="$PYTHON trainer.py"
 EVALUATOR="$PYTHON evaluator.py"
 
-ev_perc=0.25
-tr_perc=0.74
+ev_perc=0.20
+tr_perc=0.80
 token="basic"
-umbral=0.9
+threshold=0.1
 
 not_def_parms=()
 while getopts "e:t:k:u:" opt; do
@@ -35,8 +35,8 @@ while getopts "e:t:k:u:" opt; do
 		not_def_parms+=($token)
 		;;
 	u)
-		umbral=$OPTARG
-		not_def_parms+=($umbral)
+		threshold=$OPTARG
+		not_def_parms+=($threshold)
 		;;
 	esac
 done
@@ -49,7 +49,7 @@ mkfifo $TR_DATA
 
 $SPLITTER -e$ev_perc -t$tr_perc -d$DATA_DIR $EV_HAM $EV_SPAM $TR_HAM $TR_SPAM &\
 $TRAINER -a$TR_HAM -s$TR_SPAM -o$TR_DATA -t$token&\
-cmat=$($EVALUATOR -a$EV_HAM -s$EV_SPAM -d$TR_DATA -t$token -m)
+cmat=$($EVALUATOR -a$EV_HAM -s$EV_SPAM -d$TR_DATA -k$token -m -u$threshold)
 
 echo "${not_def_parms[@]};$cmat"
 
