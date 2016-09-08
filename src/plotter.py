@@ -7,6 +7,8 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as mpl
 
+from matplotlib.ticker import IndexLocator, FormatStrFormatter
+
 def transpose(l):
     return list(map(list, zip(*l)))
 
@@ -52,15 +54,28 @@ def plot(pdata):
     bar_width = 1.0/5.0
     fig = mpl.figure(0)
     splot = fig.add_subplot(1, 1, 1)
-    ind = [x for x in range(len(pdata[0]))]
+    ind = list(range(len(pdata[0])))
 
     plot_data(pdata, 0, ind, bar_width)
     plot_data(pdata, 1, ind, bar_width)
     plot_data(pdata, 2, ind, bar_width)
     plot_data(pdata, 3, ind, bar_width)
 
-    splot.set_xticks([x + 2*bar_width for x in ind])
-    splot.set_xticklabels(pdata[0])
+    splot.xaxis.set_major_locator(IndexLocator(2, 0))
+    splot.xaxis.set_minor_locator(IndexLocator(2, 1))
+    splot.tick_params(which='major', pad=20, axis='x')
+
+    lst = [x +2*bar_width for x in ind]
+
+    splot.set_xticks(lst[0::2])
+    splot.set_xticks(lst[1::2], minor=True)
+
+    labels = pdata[0]
+
+    splot.set_xticklabels(labels[0::2])
+    splot.set_xticklabels(labels[1::2], minor=True)
+
+    splot.tick_params(axis="both", which="both", labelsize=10)
 
     return fig
 
@@ -69,15 +84,10 @@ def main():
     argpar.add_argument("-d", "--data-path",
                         required=True,
                         help="File with data to plot")
-    argpar.add_argument("-s", "--show",
-                        action="store_true",
-                        help="Show plot instead of save it")
     args = argpar.parse_args()
 
     fig = plot(process_data(args.data_path))
     mpl.savefig(os.path.splitext(args.data_path)[0] + ".png")
-    if args.show:
-        mpl.show()
 
 if __name__ == "__main__":
     main()

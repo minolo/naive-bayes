@@ -1,0 +1,7 @@
+10
+-k basic
+-k word2
+-k alphnum2
+-k alphnum3
+-k alph3
+-k groupwords+alph3
