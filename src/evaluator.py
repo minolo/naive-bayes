@@ -4,15 +4,15 @@ import logging
 import pickle
 from functools import partial
 
-def evaluate(ham_mails, spam_mails, training_data, tk_type, threshold):
+def evaluate(ham_mails, spam_mails, training_data, threshold):
 
     # Initialize confusion matrix
     cmat = {"ham" :{"ham":0, "spam":0},
             "spam":{"ham":0, "spam":0}}
 
     # Classify mails
-    ham_mails_classified  = map(partial(classify, training_data=training_data, tk_type=tk_type, threshold=threshold), ham_mails )
-    spam_mails_classified = map(partial(classify, training_data=training_data, tk_type=tk_type, threshold=threshold), spam_mails)
+    ham_mails_classified  = map(partial(classify, training_data=training_data, threshold=threshold), ham_mails )
+    spam_mails_classified = map(partial(classify, training_data=training_data, threshold=threshold), spam_mails)
 
     # Fill confusion matrix
     for classification in ham_mails_classified:
@@ -46,8 +46,6 @@ def main():
     argpar.add_argument("-m", "--machine",
                         action="store_true",
                         help="Output in machine format")
-    argpar.add_argument("-k", "--tk-type",
-                        type=str, required=True, help="Tokenize method")
     argpar.add_argument("-u", "--threshold",
                         type=float, required=True, help="Threshold")
 
@@ -78,7 +76,7 @@ def main():
         exit(-1)
 
     # Compute the confusion matrix
-    cmat = evaluate(ham_files, spam_files, training_data, args.tk_type, args.threshold)
+    cmat = evaluate(ham_files, spam_files, training_data, args.threshold)
 
     # Print performance data
     if args.machine:

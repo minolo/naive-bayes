@@ -51,7 +51,10 @@ def train(ham_files, spam_files, tk_type):
     token_spamicity = dict((token, spamicity(p_ham, p_spam, probabilities_ham[token], probabilities_spam[token])) for token in vocabulary)
 
     # Precalculate difference of logarithms for classification
-    result = dict((token, difflog(token_spamicity[token])) for token in vocabulary)
+    difflogs = dict((token, difflog(token_spamicity[token])) for token in vocabulary)
+
+    # Fill result
+    result = dict([("tk_type", tk_type), ("difflogs", difflogs)])
 
     return result
 

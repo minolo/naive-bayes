@@ -5,16 +5,16 @@ import math
 
 from tokenizer import tokenize
 
-def classify(mail_path, training_data, tk_type, threshold):
+def classify(mail_path, training_data, threshold):
 
     # Tokenize mail
-    mail_tokens = tokenize(mail_path, token_type=tk_type)
+    mail_tokens = tokenize(mail_path, token_type=training_data["tk_type"])
 
     # Gather logarithms
-    logarithms = [training_data[token] for token in mail_tokens if token in training_data]
+    difflogs = [training_data["difflogs"][token] for token in mail_tokens if token in training_data["difflogs"]]
 
     # Calculate exponent
-    exponent = sum(logarithms)
+    exponent = sum(difflogs)
 
     # If the exponent has a low absolute value, use the formula directly
     if abs(exponent) < 100:
@@ -36,7 +36,6 @@ def main():
     argpar = argparse.ArgumentParser()
     argpar.add_argument("-i", "--input-file",    type=str,   required=True, help="Input file to classify")
     argpar.add_argument("-t", "--training-data", type=str,   required=True, help="Training data file")
-    argpar.add_argument("-k", "--tk-type",       type=str,   required=True, help="Tokenize method")
     argpar.add_argument("-u", "--threshold",     type=float, required=True, help="Threshold to considerate a mail spam")
 
     # Parse the arguments
@@ -52,8 +51,7 @@ def main():
         exit(-1)
 
     # Classify the file
-    result =\
-        classify(args.input_file, training_data, args.tk_type, args.threshold)
+    result = classify(args.input_file, training_data, args.threshold)
 
     # Print result
     print("This file is classified as {}".format(result))
